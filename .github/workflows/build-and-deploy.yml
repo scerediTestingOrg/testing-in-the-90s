@@ -75,6 +75,7 @@ jobs:
           npm run build
 
   release:
+    if: false
     permissions:
       contents: write
       packages: write
@@ -123,7 +124,6 @@ jobs:
     needs:
       - build
       - code-style
-      - release
       - dry-website-build
     if: github.event_name != 'pull_request' && needs.release.outputs.has_released == 'true'
     steps:
