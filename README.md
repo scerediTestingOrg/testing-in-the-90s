@@ -1,0 +1,1 @@
+# template-for-scala3-projects
