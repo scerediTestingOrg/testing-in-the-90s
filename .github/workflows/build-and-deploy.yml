@@ -1,7 +1,17 @@
 name: CI/CD Process
 on:
   workflow_call:
-  workflow_dispatch:
+    inputs:
+      release:
+        required: false
+        type: string
+        default: "false"
+  workflow_dispatch:  # Optional, for direct invocation
+    inputs:
+      release:
+        description: 'Trigger a release?'
+        required: false
+        default: 'false'
 jobs:
   build:
     strategy:
@@ -76,7 +86,7 @@ jobs:
           npm run build
 
   release:
-    if: startsWith(github.ref, 'refs/heads/releases/')
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.release == 'true'
     permissions:
       contents: write
       packages: write
