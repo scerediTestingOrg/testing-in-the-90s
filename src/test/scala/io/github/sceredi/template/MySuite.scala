@@ -6,5 +6,5 @@ import matchers.*
 class ExampleSpec extends AnyFlatSpec with should.Matchers:
 
   "Integer" should "equal itself" in:
-    val i = 1
-    i should be(1)
+    val i = 2
+    i should be(2)
