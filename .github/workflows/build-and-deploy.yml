@@ -8,6 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-24.04, windows-2022, macos-14]
+        java-version: [17, 21, 23]
     runs-on: ${{ matrix.os }}
     env:
       ci: true
@@ -18,7 +19,7 @@ jobs:
         uses: actions/setup-java@v4.7.1
         with:
           distribution: temurin
-          java-version: 17
+          java-version: ${{ matrix.java-version }}
           cache: sbt
       - uses: sbt/setup-sbt@v1.1.11
       - name: Build and test
@@ -34,7 +35,7 @@ jobs:
         uses: actions/setup-java@v4.7.1
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1.1.11
       - name: Compile
@@ -58,7 +59,7 @@ jobs:
         uses: actions/setup-java@v4.7.1
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1.1.11
       - name: Build scaladoc
@@ -75,7 +76,7 @@ jobs:
           npm run build
 
   release:
-    if: false
+    if: startsWith(github.ref, 'refs/heads/release/')
     permissions:
       contents: write
       packages: write
@@ -102,7 +103,7 @@ jobs:
         uses: actions/setup-java@v4.7.1
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1.1.11
       - name: Assembly fatjar
@@ -138,7 +139,7 @@ jobs:
         uses: actions/setup-java@v4.7.1
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
           cache: sbt
       - uses: sbt/setup-sbt@v1.1.11
       - name: Generate ScalaDoc
