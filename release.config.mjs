@@ -7,7 +7,7 @@ git tag -a -f v\${nextRelease.version} v\${nextRelease.version} -F CHANGELOG.md 
 export CI_COMMIT_TAG="true"
 `;
 
-const releaseBranches = ["master"];
+const releaseBranches = [{ name: "releases/**" }];
 config.branches = releaseBranches;
 
 config.plugins.push(
