@@ -10,15 +10,15 @@ import { themes as prismThemes } from "prism-react-renderer";
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Template for Scala3 projects",
-  tagline: "A template for scala3 projects",
+  title: "Testing in the 90s",
+  tagline: "This is a test",
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
   url: "https://sceredi.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/template-for-scala3-projects",
+  baseUrl: "/testing-in-the-90s",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
