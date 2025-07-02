@@ -103,6 +103,8 @@ jobs:
     steps:
       - name: Checkout
         uses: DanySK/action-checkout@0.2.22
+        with:
+          persist-credentials: false
       - name: Setup node
         uses: actions/setup-node@v4.4.0
         with:
@@ -121,14 +123,10 @@ jobs:
             sbt assembly
             mkdir -p target/fatjar
             mv target/scala-${{ needs.dry-website-build.outputs.scala_version }}/root-assembly-*.jar target/fatjar/${{ github.event.repository.name }}.jar
-      - name: Who am I
-        run: |
-          curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" https://api.github.com/user
       - name: Release
-        run: |
-            npx semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
 
   upload-docs:
     concurrency:
