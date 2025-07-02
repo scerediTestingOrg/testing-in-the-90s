@@ -124,8 +124,6 @@ jobs:
             mkdir -p target/fatjar
             mv target/scala-${{ needs.dry-website-build.outputs.scala_version }}/root-assembly-*.jar target/fatjar/${{ github.event.repository.name }}.jar
       - name: Release
-        with:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           DEBUG: semantic-release:*
