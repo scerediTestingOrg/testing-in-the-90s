@@ -1,3 +1,36 @@
+## [0.2.0](https://github.com/scerediTestingOrg/testing-in-the-90s/compare/v0.1.0...v0.2.0) (2025-07-02)
+
+### Features
+
+* this is a feature ([7e0efef](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/7e0efef8d230d4e93ad5eeaa3b1bfd02099e98dd))
+* what a beautiful feature ([f797407](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/f797407ce53aaa5a49cdbbdbc5c0c6df5ca0d52c))
+
+### Bug Fixes
+
+* release token ([#16](https://github.com/scerediTestingOrg/testing-in-the-90s/issues/16)) ([83d438c](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/83d438c5b08ddadd0d063e199ff40c611894baae))
+* update release token ([ba6161e](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/ba6161eaeb7a95bc2c347d6569edf8edc2561735))
+
+### Documentation
+
+* update docusaurus config ([78dc18c](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/78dc18c886844c40c952e05527a72676a58e19a9))
+
+### Build and continuous integration
+
+* always update website ([b2ef7a8](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/b2ef7a836fcf6c4b280ee385377003a03b405418))
+* change GITHUB_TOKEN to GH_TOKEN ([3c1cde0](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/3c1cde0ac6a311c8ab24c993c657240a54cbf0f7))
+* is the secret working ([02fb4c5](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/02fb4c5f579169c592dec335b6afca42443f4b0c))
+* is the secret working now? ([54c47f5](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/54c47f5157f1ba393195edca439e1350cc05d62b))
+* release docs only from main branch ([8742183](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/87421833392af31ef0f6aa684acb762e3db2559c))
+* trigger release manually from main branch ([6a748a3](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/6a748a3f9b77d84629c7022b8faf1f4964fb9343))
+* update configuration to work correctly in scrum ([#3](https://github.com/scerediTestingOrg/testing-in-the-90s/issues/3)) ([14e0f7a](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/14e0f7ad699e2475fc333ba330cc14edc6cf4e3d))
+* use actions checkout ([a4a4c49](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/a4a4c4962b374fbff7d0526099b5609bec070278))
+
+### General maintenance
+
+* add script to lint and fmt ([3e19cf1](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/3e19cf1a5b80d72a75aeea9131dd7d000fc3093d))
+* **renovate:** update config to use org one ([398ad89](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/398ad892a38ff59f076ae57e272a4b66b926f8ba))
+* update readme ([9392e4f](https://github.com/scerediTestingOrg/testing-in-the-90s/commit/9392e4f65565bc8041905c1e2ef51250ce134044))
+
 ## [1.0.2](https://github.com/sceredi/template-for-scala3-projects/compare/v1.0.1...v1.0.2) (2025-06-03)
 
 ### Dependency updates
