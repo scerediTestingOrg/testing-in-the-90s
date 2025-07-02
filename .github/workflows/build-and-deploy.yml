@@ -121,6 +121,9 @@ jobs:
             sbt assembly
             mkdir -p target/fatjar
             mv target/scala-${{ needs.dry-website-build.outputs.scala_version }}/root-assembly-*.jar target/fatjar/${{ github.event.repository.name }}.jar
+      - name: Who am I
+        run: |
+          curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" https://api.github.com/user
       - name: Release
         run: |
             npx semantic-release
