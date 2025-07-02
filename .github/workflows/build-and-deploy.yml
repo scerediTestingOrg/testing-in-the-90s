@@ -126,7 +126,6 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          DEBUG: semantic-release:*
         run: npx semantic-release
 
   upload-docs:
