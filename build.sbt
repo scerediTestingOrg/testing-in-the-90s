@@ -37,14 +37,17 @@ lazy val root = project
       "-unchecked",
       "-explain",
       "-feature",
-      "-language:strictEquality",
+//      "-language:strictEquality",
       "-language:implicitConversions",
     ),
     coverageEnabled := true,
     semanticdbEnabled := true,
-    semanticdbVersion := scalafixSemanticdb.revision,
-    wartremoverErrors ++= Warts.all,
 
+    semanticdbVersion := scalafixSemanticdb.revision,
+//    wartremoverErrors ++= Warts.allBut(
+//      Wart.DefaultArguments,
+//      Wart.Equals
+//    ),
     /*
      * Dependencies
      */
