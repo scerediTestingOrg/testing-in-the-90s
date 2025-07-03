@@ -102,7 +102,9 @@ jobs:
       - dry-website-build
     steps:
       - name: Checkout
-        uses: DanySK/action-checkout@0.2.22
+        uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
       - name: Setup node
         uses: actions/setup-node@v4.4.0
         with:
@@ -122,10 +124,9 @@ jobs:
             mkdir -p target/fatjar
             mv target/scala-${{ needs.dry-website-build.outputs.scala_version }}/root-assembly-*.jar target/fatjar/${{ github.event.repository.name }}.jar
       - name: Release
-        run: |
-            npx semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release
 
   upload-docs:
     concurrency:
