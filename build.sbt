@@ -1,5 +1,7 @@
 import Dependencies.*
 
+enablePlugins(JacocoCoverallsPlugin)
+
 lazy val root = project
   .in(file("."))
   .settings(
