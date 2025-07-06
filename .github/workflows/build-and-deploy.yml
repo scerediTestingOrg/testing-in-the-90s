@@ -76,15 +76,6 @@ jobs:
         id: scala-version
         run: |
           echo "version=$(sbt 'show scalaVersion' | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | tail -n 1)" >> "$GITHUB_OUTPUT"
-      - name: Get Codecov CLI
-        run: |
-          curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import # One-time step  
-          curl -Os https://cli.codecov.io/latest/linux/codecov
-          curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM
-          curl -Os https://cli.codecov.io/latest/linux/codecov.SHA256SUM.sig
-          gpg --verify codecov.SHA256SUM.sig codecov.SHA256SUM
-          shasum -a 256 -c codecov.SHA256SUM
-          sudo chmod +x codecov
       - name: Run Coverage
         run: sbt clean jacoco
       - name: Add coverage to PR
@@ -95,11 +86,13 @@ jobs:
           paths: |
             ${{ github.workspace }}/**/target/scala-${{ steps.scala-version.outputs.version }}/jacoco/report/jacoco.xml
           token: ${{ secrets.GH_TOKEN }}
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Coveralls
         if: github.ref == 'refs/heads/main'
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: ./codecov
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          export CI_BRANCH="${GITHUB_REF#refs/heads/}"
+          sbt clean jacoco jacocoCoveralls
 
   dry-website-build:
     runs-on: ubuntu-24.04
