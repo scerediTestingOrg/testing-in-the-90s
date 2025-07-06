@@ -44,7 +44,13 @@ lazy val root = project
     semanticdbEnabled := true,
     semanticdbVersion := scalafixSemanticdb.revision,
     wartremoverErrors ++= Warts.all,
-    jacocoReportSettings := JacocoReportSettings(title = "PR report", formats = Seq(JacocoReportFormats.XML)),
+    jacocoReportSettings := JacocoReportSettings(
+      title = "PR report",
+      None,
+      JacocoThresholds(),
+      formats = Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
+      "utf-8",
+    ),
 
     /*
      * Dependencies

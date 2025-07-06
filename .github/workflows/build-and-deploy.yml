@@ -59,7 +59,6 @@ jobs:
         run: sbt "scalafixAll --check"
 
   code-coverage:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
@@ -80,6 +79,7 @@ jobs:
       - name: Run Coverage
         run: sbt clean jacoco
       - name: Add coverage to PR
+        if: github.ref != 'refs/heads/main'
         id: jacoco
         uses: madrapps/jacoco-report@v1.7.2
         with:
