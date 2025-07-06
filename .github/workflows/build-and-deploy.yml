@@ -58,6 +58,35 @@ jobs:
         shell: bash
         run: sbt "scalafixAll --check"
 
+  code-coverage:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set up JDK
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: sbt
+      - uses: sbt/setup-sbt@v1.1.11
+      - name: Extract Scala version
+        id: scala-version
+        run: |
+          echo "version=$(sbt 'show scalaVersion' | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | tail -n 1)" >> "$GITHUB_OUTPUT"
+      - name: Run Coverage
+        run: sbt clean jacoco
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.7.2
+        with:
+          paths: |
+            ${{ github.workspace }}/**/target/scala-${{ steps.scala-version.outputs.version }}/jacoco/report/jacoco.xml,
+          token: ${{ secrets.GH_TOKEN }}
+
   dry-website-build:
     runs-on: ubuntu-24.04
     outputs:
@@ -99,6 +128,7 @@ jobs:
     needs:
       - build
       - code-style
+      - code-coverage
       - dry-website-build
     steps:
       - name: Checkout
@@ -136,6 +166,7 @@ jobs:
     needs:
       - build
       - code-style
+      - code-coverage
       - dry-website-build
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     steps:
@@ -176,10 +207,11 @@ jobs:
     runs-on: ubuntu-24.04
     needs:
       - build
+      - code-style
+      - code-coverage
       - dry-website-build
       - release
       - upload-docs
-      - code-style
     if: >-
       always() && (
         contains(join(needs.*.result, ','), 'failure')
