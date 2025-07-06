@@ -4,4 +4,4 @@
 
 def msg = "I was compiled by Scala 3. :)"
 
-val imanint = 1
+val imanint: Int = 1
