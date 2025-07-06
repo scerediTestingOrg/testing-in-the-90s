@@ -15,3 +15,6 @@ class ExampleSpec extends AnyFlatSpec with should.Matchers:
 
   "msg size" should "say something nice" in:
     msg should be("I was compiled by Scala 3. :)")
+
+  "anint" should "equal 1" in:
+    anint should be(1)
