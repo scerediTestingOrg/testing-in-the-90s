@@ -86,6 +86,8 @@ jobs:
           paths: |
             ${{ github.workspace }}/**/target/scala-${{ steps.scala-version.outputs.version }}/jacoco/report/jacoco.xml
           token: ${{ secrets.GH_TOKEN }}
+          update-comment: true
+          title: Coverage report
       - name: Upload coverage to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
