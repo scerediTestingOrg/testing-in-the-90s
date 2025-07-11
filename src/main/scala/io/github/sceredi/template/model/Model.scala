@@ -24,7 +24,7 @@ trait SimulationState:
 
 trait Sensor[T]:
   val orientation: Orientation
-  val sense: (SimulationState, Robot) => SensorReading[T]
+  val sense: (SimulationState/*environment*/, Robot) => SensorReading[T]
 
 type Actuator[T] = (ActuatorValue[T], Robot) => Robot
 
@@ -35,7 +35,10 @@ trait SensorConfig:
 trait ActuatorConfig:
   val wheels: Option[Actuator[WheelsValue]]
 
-type Behavior = (Robot, SimulationState) => ActuatorConfig
+type Behavior = (Robot, SimulationState) => ActuatorConfig // Forse meglio una Seq[Action]
+
+enum Action:
+  case Move(value: WheelsValue)
 
 // Simple implementations
 
