@@ -1,128 +1,136 @@
 package io.github.sceredi.template.model
 
-final case class Position(x: Double, y: Double):
-  override def toString: String = "Position(x=" + x.toString + ", y=" + y.toString + ")"
+import scala.util.Random
 
-final case class Angle(degrees: Double):
-  override def toString: String = "Angle(degrees=" + degrees.toString + ")"
+type Position = (Double, Double)
+type Orientation = Double
 
-final case class SimulationState(): // Placeholder for full state
-  override def toString: String = "SimulationState()"
+type ProximityReading = Double
+type LightReading = Double
 
-final case class RobotState(
-  position: Position,
-  orientation: Angle
-):
-  override def toString: String = "RobotState(position=" + position.toString + ", orientation=" + orientation.toString + ")"
+type ActuatorValue[T] = T
 
+type WheelsValue = (Double, Double)
 
-trait Sensor[Out]:
-  def id: String
-  def sense(state: SimulationState, self: RobotState): Out
+trait Robot:
+  val sensorConfig: SensorConfig
+  val actuatorConfig: ActuatorConfig
+  val position: Position
+  val orientation: Orientation
 
-trait Actuator[In]:
-  val input: In
-  def act(self: RobotState): RobotState
+type SensorReading[T] = T
 
-final case class ProximitySensor(id: String) extends Sensor[Double]:
-  def sense(state: SimulationState, self: RobotState): Double =
-    0.5 // mock distance
+trait SimulationState:
+  val robots: Seq[Robot]
 
-final case class LightSensor(id: String) extends Sensor[Double]:
-  def sense(state: SimulationState, self: RobotState): Double =
-    0.8 // mock intensity
+trait Sensor[T]:
+  val orientation: Orientation
+  val sense: (SimulationState, Robot) => SensorReading[T]
 
-final case class Wheels(val input: (Double, Double)) extends Actuator[(Double, Double)]:
-  def act(self: RobotState): RobotState =
-    // update position based on input
-    self.copy(position = Position(self.position.x + input._1, self.position.y + input._2))
+type Actuator[T] = (ActuatorValue[T], Robot) => Robot
 
-type SensorReading = Double
-type ActuatorCommand = Double
+trait SensorConfig:
+  val proximitySensors: Option[Seq[Sensor[ProximityReading]]]
+  val lightSensors: Option[Seq[Sensor[LightReading]]]
 
-trait Behavior[
-  ProxSensors <: Tuple,
-  LightSensors <: Tuple,
-  Actuators <: Tuple
-]:
-  def decide(
-    proximity: ProxSensors,
-    light: LightSensors
-  ): Actuators
+trait ActuatorConfig:
+  val wheels: Option[Actuator[WheelsValue]]
 
+type Behavior = (Robot, SimulationState) => ActuatorConfig
 
-object Behavior:
-  def withHardware[
-    ProxSensors <: Tuple,
-    LightSensors <: Tuple,
-    Actuators <: Tuple
-  ] =
-    new BehaviorBuilder[ProxSensors, LightSensors, Actuators]
+// Simple implementations
 
-class BehaviorBuilder[
-  ProxSensors <: Tuple,
-  LightSensors <: Tuple,
-  Actuators <: Tuple
-]:
-  def define(
-    f: (ProxSensors, LightSensors) => Actuators
-  ): Behavior[ProxSensors, LightSensors, Actuators] =
-    new Behavior:
-      def decide(prox: ProxSensors, light: LightSensors) = f(prox, light)
+/** A simple robot implementation with basic sensors and actuators */
+final case class SimpleRobot(
+    sensorConfig: SensorConfig,
+    actuatorConfig: ActuatorConfig,
+    position: Position,
+    orientation: Orientation,
+) extends Robot
 
+/** Simple sensor configuration with proximity sensors */
+final case class SimpleSensorConfig(
+    proximitySensors: Option[Seq[Sensor[ProximityReading]]],
+    lightSensors: Option[Seq[Sensor[LightReading]]],
+) extends SensorConfig
 
-// Proximity sensors: front-left to front-right
-type ProxConfig = (
-  ProximitySensor, ProximitySensor, ProximitySensor, ProximitySensor,
-  ProximitySensor, ProximitySensor, ProximitySensor, ProximitySensor
-)
+/** Simple actuator configuration with wheels */
+final case class SimpleActuatorConfig(
+    wheels: Option[Actuator[WheelsValue]],
+) extends ActuatorConfig
 
-type LightConfig = (
-  LightSensor, LightSensor, LightSensor, LightSensor
-)
+/** Simple simulation state containing robots */
+final case class SimpleSimulationState(
+    robots: Seq[Robot],
+) extends SimulationState
 
-type ActuatorConfig = Tuple1[Wheels]
+/** A simple proximity sensor implementation */
+class SimpleProximitySensor(val orientation: Orientation, maxRange: Double) extends Sensor[ProximityReading]:
 
-val simpleAvoidanceBehavior = Behavior
-  .withHardware[ProxConfig, LightConfig, ActuatorConfig]
-  .define { (_, _) =>
-    // For now, just return the wheels - behavior logic will be in main
-    Tuple1(Wheels((0.5, 0.2)))
-  }
+  val sense: (SimulationState, Robot) => SensorReading[ProximityReading] = (state, robot) =>
+    // For simplicity, check distance to other robots
+    val distances = state.robots
+      .filter(otherRobot => otherRobot.position._1 != robot.position._1 || otherRobot.position._2 != robot.position._2)
+      .map { otherRobot =>
+        val dx = otherRobot.position._1 - robot.position._1
+        val dy = otherRobot.position._2 - robot.position._2
+        math.sqrt(dx * dx + dy * dy)
+      }
 
-object BehaviorMain:
-  @main def main(): Unit = 
-    val robotState = RobotState(Position(0, 0), Angle(0))
-    val simState = SimulationState()
+    // Return the minimum distance, or maxRange if no obstacles
+    if distances.nonEmpty then distances.foldLeft(maxRange)((acc, dist) => if dist < acc then dist else acc)
+    else maxRange
 
-    // Define hardware (mock sensors and actuators)
-    val proxSensors: ProxConfig = (
-      ProximitySensor("p0"), ProximitySensor("p1"), ProximitySensor("p2"), ProximitySensor("p3"),
-      ProximitySensor("p4"), ProximitySensor("p5"), ProximitySensor("p6"), ProximitySensor("p7")
+/** Simple wheels actuator that moves the robot */
+object SimpleWheelsActuator:
+
+  def apply(wheelValues: ActuatorValue[WheelsValue], robot: Robot): Robot =
+    val (leftWheel, rightWheel) = wheelValues
+    val speed = (leftWheel + rightWheel) / 2.0
+    val angularVelocity = (rightWheel - leftWheel) / 2.0 // Simplified differential drive
+
+    // Update position and orientation
+    val newOrientation = robot.orientation + angularVelocity * 0.1 // dt = 0.1
+    val newX = robot.position._1 + speed * math.cos(newOrientation) * 0.1
+    val newY = robot.position._2 + speed * math.sin(newOrientation) * 0.1
+
+    robot match
+      case r: SimpleRobot =>
+        r.copy(
+          position = (newX, newY),
+          orientation = newOrientation,
+        )
+      case _ => robot // Fallback for other robot types
+
+/** Random walk behavior with obstacle avoidance */
+object RandomWalkBehavior:
+  private val random = Random()
+  private val baseSpeed = 0.5
+  private val obstacleThreshold = 0.3
+
+  def apply(robot: Robot, state: SimulationState): ActuatorConfig =
+    // Read proximity sensors if available
+    val proximityReadings = robot.sensorConfig.proximitySensors match
+      case Some(sensors) => sensors.map(_.sense(state, robot))
+      case None => Seq.empty[ProximityReading]
+
+    // Check if any sensor detects a close obstacle
+    val obstacleDetected = proximityReadings.exists(_ < obstacleThreshold)
+
+    val wheelValues = if obstacleDetected then
+      // Stop or turn away from obstacle
+      val turnDirection = if random.nextBoolean() then 1.0 else -1.0
+      (baseSpeed * -turnDirection, baseSpeed * turnDirection)
+    else
+      // Random walk: add some randomness to movement
+      val randomFactor = 0.3
+      val leftRandom = (random.nextGaussian() * randomFactor).max(-1.0).min(1.0)
+      val rightRandom = (random.nextGaussian() * randomFactor).max(-1.0).min(1.0)
+      (baseSpeed + leftRandom, baseSpeed + rightRandom)
+
+    // Return actuator configuration with wheel values that will be used by the actuator
+    SimpleActuatorConfig(
+      wheels = Some((_, r) => SimpleWheelsActuator(wheelValues, r)),
     )
-
-    val lightSensors: LightConfig = (
-      LightSensor("l0"), LightSensor("l1"), LightSensor("l2"), LightSensor("l3")
-    )
-
-    // Apply behavior to get actuator instances
-    val outputs = simpleAvoidanceBehavior.decide(proxSensors, lightSensors)
-
-    // Get sensor readings for demonstration
-    val frontLeftReading = proxSensors(1).sense(simState, robotState)
-    val frontRightReading = proxSensors(6).sense(simState, robotState)
-    
-    // Calculate wheel speeds
-    val leftWheelSpeed = 1.0 - frontLeftReading
-    val rightWheelSpeed = 1.0 - frontRightReading
-
-    // Apply actuators
-    val wheels = outputs._1
-    val newRobotState1 = wheels.act(robotState)
-
-    println("Initial state: " + robotState.toString)
-    println("Front left sensor: " + frontLeftReading.toString)
-    println("Front right sensor: " + frontRightReading.toString)
-    println("Left wheel speed: " + leftWheelSpeed.toString)
-    println("Right wheel speed: " + rightWheelSpeed.toString)
-    println("Final state: " + newRobotState1.toString)
+  end apply
+end RandomWalkBehavior
