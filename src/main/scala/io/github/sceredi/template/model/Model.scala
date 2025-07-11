@@ -8,6 +8,7 @@ type Orientation = Double
 type ProximityReading = Double
 type LightReading = Double
 
+type SensorReading[T] = T
 type ActuatorValue[T] = T
 
 type WheelsValue = (Double, Double)
@@ -17,8 +18,6 @@ trait Robot:
   val actuatorConfig: ActuatorConfig
   val position: Position
   val orientation: Orientation
-
-type SensorReading[T] = T
 
 trait SimulationState:
   val robots: Seq[Robot]
