@@ -24,7 +24,7 @@ trait SimulationState:
 
 trait Sensor[T]:
   val orientation: Orientation
-  val sense: (SimulationState/*environment*/, Robot) => SensorReading[T]
+  val sense: (SimulationState /*environment*/, Robot) => SensorReading[T]
 
 type Actuator[T] = (ActuatorValue[T], Robot) => Robot
 
