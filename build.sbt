@@ -3,7 +3,7 @@ import Dependencies.*
 lazy val root = project
   .in(file("."))
   .settings(
-    scalaVersion := "3.7.1",
+    scalaVersion := "3.7.2",
     organization := "io.github.sceredi",
     description := "A template for Scala3 projects",
     homepage := Some(
