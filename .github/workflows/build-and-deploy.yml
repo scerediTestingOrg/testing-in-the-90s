@@ -31,7 +31,7 @@ jobs:
           distribution: temurin
           java-version: ${{ matrix.java-version }}
           cache: sbt
-      - uses: sbt/setup-sbt@v1.1.11
+      - uses: sbt/setup-sbt@v1.1.12
       - name: Build and test
         shell: bash
         run: sbt +test
@@ -47,7 +47,7 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: sbt
-      - uses: sbt/setup-sbt@v1.1.11
+      - uses: sbt/setup-sbt@v1.1.12
       - name: Compile
         shell: bash
         run: sbt compile
@@ -71,7 +71,7 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: sbt
-      - uses: sbt/setup-sbt@v1.1.11
+      - uses: sbt/setup-sbt@v1.1.12
       - name: Build scaladoc
         shell: bash
         run: sbt doc
@@ -117,7 +117,7 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: sbt
-      - uses: sbt/setup-sbt@v1.1.11
+      - uses: sbt/setup-sbt@v1.1.12
       - name: Assembly fatjar
         run: |
             sbt assembly
@@ -152,7 +152,7 @@ jobs:
           distribution: temurin
           java-version: 21
           cache: sbt
-      - uses: sbt/setup-sbt@v1.1.11
+      - uses: sbt/setup-sbt@v1.1.12
       - name: Generate ScalaDoc
         run: sbt doc
       - name: Generate doc website
